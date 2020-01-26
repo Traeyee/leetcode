@@ -4,6 +4,9 @@
 # Created Time: 22 January 2020 23:24
 
 
+null = None
+
+
 def array_2d_for_go(array_2d):
     def _array_2d_for_go(_l):
         eles = []
@@ -13,8 +16,20 @@ def array_2d_for_go(array_2d):
             else:
                 eles.append(str(ele))
         return "{{{}}}".format(", ".join(eles))
-    return _array_2d_for_go(array_2d)
+
+    print(_array_2d_for_go(array_2d))
+
+
+def tree_vals_for_go(vals):
+    go_vals = []
+    for val in vals:
+        if val is null:
+            go_vals.append("nil")
+        else:
+            go_vals.append(str(val))
+    print("{{{}}}".format(", ".join(go_vals)))
 
 
 def main():
-    print(array_2d_for_go([[3, 0, 8, 4], [2, 4, 5, 7], [9, 2, 6, 3], [0, 3, 1, 0]]))
+    array_2d_for_go([[3, 0, 8, 4], [2, 4, 5, 7], [9, 2, 6, 3], [0, 3, 1, 0]])
+    tree_vals_for_go([10, 5, 15, 3, 7, null, 18])
