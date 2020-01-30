@@ -16,7 +16,7 @@ def array_2d_for_go(array_2d):
             else:
                 eles.append(str(ele))
         return "{{{}}}".format(", ".join(eles))
-
+    
     print(_array_2d_for_go(array_2d))
 
 
