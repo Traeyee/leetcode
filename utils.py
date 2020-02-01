@@ -7,14 +7,20 @@
 null = None
 
 
-def array_2d_for_go(array_2d):
+def array_2d_for_go(array_2d, to_rune=False):
     def _array_2d_for_go(_l):
         eles = []
         for ele in _l:
             if isinstance(ele, list):
                 eles.append(_array_2d_for_go(ele))
             else:
-                eles.append(str(ele))
+                if isinstance(ele, str):
+                    if to_rune:
+                        eles.append("'{}'".format(ele))
+                    else:
+                        eles.append('"{}"'.format(ele))
+                else:
+                    eles.append(str(ele))
         return "{{{}}}".format(", ".join(eles))
     
     print(_array_2d_for_go(array_2d))
