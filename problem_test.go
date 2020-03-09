@@ -10,8 +10,17 @@ func TestP338(t *testing.T) {
 func TestP419(t *testing.T) {
 	P419()
 }
+func TestP442(t *testing.T) {
+	P442()
+}
 func TestP461(t *testing.T) {
 	P461()
+}
+func TestP476(t *testing.T) {
+	P476()
+}
+func TestP500(t *testing.T) {
+	P500()
 }
 func TestP654(t *testing.T) {
 	P654()

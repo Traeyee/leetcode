@@ -43,12 +43,14 @@ func printTree(root *TreeNode) {
 	labelStack := []string{"ROOT"}
 	for ok := true; ok; ok = len(nodeStack) > 0 {
 		length := len(nodeStack)
+		// pop
 		node := nodeStack[length-1]
 		nodeStack = nodeStack[:length-1]
 		depth := depthStack[length-1]
 		depthStack = depthStack[:length-1]
 		label := labelStack[length-1]
 		labelStack = labelStack[:length-1]
+
 		if nil == node {
 			continue
 		}
@@ -57,6 +59,7 @@ func printTree(root *TreeNode) {
 			spaces += "    "
 		}
 		fmt.Printf("%s(%s)├── %d\n", spaces, label, node.Val)
+		// push
 		nodeStack = append(nodeStack, node.Right)
 		depthStack = append(depthStack, depth+1)
 		labelStack = append(labelStack, "R")
