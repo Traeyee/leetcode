@@ -19,6 +19,9 @@ func TestP461(t *testing.T) {
 func TestP476(t *testing.T) {
 	P476()
 }
+func TestP496(t *testing.T) {
+	P496()
+}
 func TestP500(t *testing.T) {
 	P500()
 }

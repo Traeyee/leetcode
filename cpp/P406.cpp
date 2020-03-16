@@ -1,57 +1,107 @@
+// Another solution:
+// https://leetcode.com/problems/queue-reconstruction-by-height/discuss/89359/Explanation-of-the-neat-Sort%2BInsert-solution
+#include <functional>
+#include <iostream>
 #include <queue>
 #include <vector>
-#include <iostream>
-#include <functional>
 
 using namespace std;
 
 struct Person {
     int h, k, k1;
+    Person* next_person;
     Person() = default;
     Person(int hh, int kk) {
         h = hh;
         k = kk;
         k1 = kk;
+        next_person = nullptr;
     }
-    // bool operator <(const Person& p) {
-    //     return k < p.k || (k == p.k && h << p.h) ? true : false;
-    // }
-    // bool operator ==(const Person& p) {
-    //     return k > p.k || (k == p.k && h > p.h) ? true : false;
-    // }
+};
+typedef Person* PersonPtr;
+struct PersonPtrCmp {
+    bool operator()(const PersonPtr& p1, const PersonPtr& p2) {
+        return p1->h > p2->h ? true : false;
+    }
 };
 
 class Solution {
    public:
     vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
-        // auto cmp = [](Person& p1, Person& p2) {
-        //     if (p1.k > p2.k) {
-        //         return true;
-        //     } else if (p1.k == p2.k) {
-        //         return p1.h > p2.h ? true : false;
-        //     }
-        //     return false;
-        // };
-        priority_queue<Person, vector<Person>, greater<Person>> people_heap;
+        PersonPtr line_head = nullptr;
+        PersonPtr tmp_person_ptr = nullptr;
         for (const auto& person : people) {
-            people_heap.push(Person(person[0], person[1]));
-        
-        
+            PersonPtr person2 = new Person(person[0], person[1]);
+            if (!line_head) {
+                line_head = person2;
+                tmp_person_ptr = person2;
+                continue;
+            }
+            tmp_person_ptr->next_person = person2;
+            tmp_person_ptr = tmp_person_ptr->next_person;
+        }
+        priority_queue<PersonPtr, vector<PersonPtr>, PersonPtrCmp> people_heap;
+        tmp_person_ptr = line_head;
+        PersonPtr tmp_person_parent_ptr = nullptr;
+        while (tmp_person_ptr) {
+            if (0 == tmp_person_ptr->k) {
+                people_heap.push(tmp_person_ptr);
+                if (tmp_person_ptr == line_head) {
+                    line_head = tmp_person_ptr->next_person;
+                }
+                if (tmp_person_parent_ptr) {
+                    tmp_person_parent_ptr->next_person =
+                        tmp_person_ptr->next_person;
+                }
+            } else {
+                tmp_person_parent_ptr = tmp_person_ptr;
+            }
+            tmp_person_ptr = tmp_person_ptr->next_person;
+        }
         vector<vector<int>> ret;
+        while (ret.size() < people.size()) {
+            while (people_heap.size() > 0) {
+                const auto person_ptr = people_heap.top();
+                people_heap.pop();
+                ret.emplace_back(vector<int>{person_ptr->h, person_ptr->k});
+                tmp_person_ptr = line_head;
+                tmp_person_parent_ptr = nullptr;
+                while (tmp_person_ptr) {
+                    if (person_ptr->h >= tmp_person_ptr->h) {
+                        tmp_person_ptr->k1--;
+                    }
+                    if (0 == tmp_person_ptr->k1) {
+                        people_heap.push(tmp_person_ptr);
+                        if (tmp_person_ptr == line_head) {
+                            line_head = tmp_person_ptr->next_person;
+                        }
+                        if (tmp_person_parent_ptr) {
+                            tmp_person_parent_ptr->next_person =
+                                tmp_person_ptr->next_person;
+                        }
+                    } else {
+                        tmp_person_parent_ptr = tmp_person_ptr;
+                    }
+                    tmp_person_ptr = tmp_person_ptr->next_person;
+                }
+            }
+        }
         return ret;
     }
 };
 
 int main() {
-    priority_queue<int, vector<int>, less<int>> max_heap;
-    for (int i = 0; i < 10; i++) {
-        max_heap.push(i);
+    vector<vector<int>> people;
+    people.emplace_back(vector<int>{7, 0});
+    people.emplace_back(vector<int>{4, 4});
+    people.emplace_back(vector<int>{7, 1});
+    people.emplace_back(vector<int>{5, 0});
+    people.emplace_back(vector<int>{6, 1});
+    people.emplace_back(vector<int>{5, 2});
+    Solution s;
+    auto ret = s.reconstructQueue(people);
+    for (const auto& p : ret) {
+        cout << p[0] << "," << p[1] << endl;
     }
-    while (max_heap.size() > 0) {
-        int ele = max_heap.top();
-        max_heap.pop();
-        cout << ele << endl;
-    }
-
     return 0;
 }
