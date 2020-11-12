@@ -4,8 +4,17 @@ import (
 	"testing"
 )
 
+func TestP46(t *testing.T) {
+	P46()
+}
+func TestP94(t *testing.T) {
+	P94()
+}
 func TestP338(t *testing.T) {
 	P338()
+}
+func TestP412(t *testing.T) {
+	P412()
 }
 func TestP419(t *testing.T) {
 	P419()
