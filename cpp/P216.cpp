@@ -1,7 +1,7 @@
 /**
  * @author cuiyi@zuoshouyisheng.com
  * @time   19 November 2020 16:14
- * @brief  leetcode好像有bug，已发thread
+ * @brief
  */
 #include <vector>
 #include <iostream>
@@ -12,7 +12,7 @@ class Solution {
   vector<vector<int>> _combinationSum3(int k, int n, int offset) {
       vector<vector<int>> result(0);
 
-      if (1 == k && offset <= n){
+      if (1 == k && offset <= n && n < 10){
           vector<int> tmp = {n};
           result.emplace_back(tmp);
           return result;
@@ -22,7 +22,7 @@ class Solution {
           return result;
       }
 
-      for (int x = offset; x < n; x++) {
+      for (int x = offset; x < n && x < 10; x++) {
           auto rst = _combinationSum3(k - 1, n - x, x + 1);
           if (rst.empty()) {
               continue;
