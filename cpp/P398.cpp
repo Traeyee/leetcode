@@ -2,7 +2,7 @@
  * @author cuiyi@zuoshouyisheng.com
  * @time   05 January 2021 13:46
  * @brief  好像并不是蓄水池问题？注意当我们限制循环次数，便是个已知序列？确实是蓄水池问题，先将池灌满
- * 教训1：vector.reserve后是从第n位开始push_back的
+ * 教训1：详见test_cpp.cpp:test_reserve
  * 教训2：uniform_int_distribution: [a, b]; uniform_real_distribution: [a, b)
  */
 #include <algorithm>

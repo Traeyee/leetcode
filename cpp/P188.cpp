@@ -22,6 +22,7 @@ class Solution {
       if (n <= 1) {
           return 0;
       }
+      // interval_max[i][j]: i ~ j天最大值
       int interval_max[n][n];
       interval_max[n - 1][n - 1] = prices[n - 1];
       for (int j = n - 1; j >= 0; j--) {
@@ -38,8 +39,9 @@ class Solution {
       for (int l = 1; l <= k; l++) {
           for (int i = 0; i < n; i++) {
               ddl_profit[l][i] = 0;
-              for (int j = 0; j < i; j++) {
-                  auto profit = ddl_profit[l - 1][j];
+              for (int j = 0; j < i; j++) {  // 买入日
+                  auto profit = ddl_profit[l - 1][j];  // 到j-1日最大利润
+                  // 即可在j日买入，j+1 ~ i选一日卖出
                   if (prices[j] < interval_max[j + 1][i]) {
                       profit += interval_max[j + 1][i] - prices[j];
                   }
