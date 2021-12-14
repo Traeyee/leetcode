@@ -18,14 +18,31 @@
 using namespace std;
 
 class Solution {
-public:
+   public:
     int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
         int n = gas.size();
-        vector<int> surplus;
+        int balance = 0;
+        int min_idx = -1, min_balance = 0;
         for (int i = 0; i < n; i++) {
-            surplus.emplace_back(gas[i] - cost[i]);
+            balance += gas[i] - cost[i];
+            if (balance < min_balance) {
+                min_balance = balance;
+                min_idx = i;
+            }
         }
 
-        
+        if (-1 == min_idx) {
+            return -1;
+        }
+        min_idx = (min_idx + 1) % n;
+        balance = 0;
+        for (int i = 0; i < n; i++) {
+            int idx = (min_idx + i) % n;
+            balance += gas[idx] - cost[idx];
+        }
+        if (balance >= 0) {
+            return min_idx;
+        }
+        return -1;
     }
 };

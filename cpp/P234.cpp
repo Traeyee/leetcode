@@ -22,6 +22,13 @@ struct ListNode {
 class Solution {
    public:
     bool isPalindrome(ListNode* head) {
+        
+    }
+    pair<bool, int> traverse(ListNode* head) {
+        auto res = traverse(head->next);
+        return make_pair(res.first && (res.second == head->val), head->val);
+    }
+    bool isPalindrome__FALSE(ListNode* head) {
         stack<int> stk;
         auto p = head;
         while (p) {

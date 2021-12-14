@@ -53,13 +53,13 @@ void test_bit_op() {
     b = ~a;  // -1
     cout << b << "\n";
 
-    a = 1;  // 00...01
-    b = ~a;  // 11...10
+    a = 1;              // 00...01
+    b = ~a;             // 11...10
     cout << b << "\n";  // -2
     // 说明c++取反都是取反真实补码（包括符号位）
 
     // 左移最特殊，不能对负数操作，正数可能变负数
-    a = 1 << 31;  // 1(32)00...0
+    a = 1 << 31;        // 1(32)00...0
     cout << a << "\n";  // -2147483648，即负0
     // warning: shifting a negative signed value is undefined
     b = ~a;
@@ -96,8 +96,113 @@ void test_reserve() {
     cout << y[0] << ", " << y[10] << "\n";
 }
 
+void test_real_random() {
+    random_device rd;
+    mt19937 mt(rd());
+    uniform_real_distribution<> dist(0, 1);
+
+    unordered_map<double, int> counter;
+    for (int i = 0; i < 10000; i++) {
+        double p = dist(mt);
+        if (p < 0.2) {
+            counter[0.2]++;
+        } else if (p < 0.4) {
+            counter[0.4]++;
+        } else if (p < 0.6) {
+            counter[0.6]++;
+        } else if (p < 0.8) {
+            counter[0.8]++;
+        } else if (p <= 1) {
+            counter[1]++;
+        } else {
+            counter[100]++;
+        }
+    }
+
+    for (const auto& p : counter) {
+        cout << p.first << ": " << p.second << "\n";
+    }
+    cout << "\n";
+}
+
+// https://zhuanlan.zhihu.com/p/97128024
+int lvar = 123;
+int& get_lref() { return lvar; }
+int get_lval() { return lvar; }
+void test_lvalue() {
+    const int& a = get_lref();
+    int& b = get_lref();
+    cout << lvar << "\n";
+    cout << get_lref() << "\n";
+    cout << a << "\n";
+    cout << b << "\n";
+
+    const int& a1 = get_lval();
+    //     error: non-const lvalue reference to type 'int' cannot bind
+    //       to a temporary of type 'int'
+    //     int& b1 = get_lval();
+    //          ^    ~~~~~~~~~~
+    // 1 error generated.
+    // 因为左值引用并不是左值，并没有建立一片稳定的内存空间，所以如果不是const的话你就可以对它的内容进行修改，而右值又不能进行赋值，所以就会出错。因此只能用const的左值引用来绑定一个右值
+    // int& b1 = get_lval();
+    cout << lvar << "\n";
+    cout << get_lval() << "\n";
+    cout << a1 << "\n";
+    // cout << b1 << "\n";
+}
+
+template <class T>
+void print_vector(vector<T>& nums) {
+    for (const auto& num : nums) {
+        cout << num << ", ";
+    }
+    cout << "\n";
+}
+
+void test_iterator() {
+    vector<int> a = {1, 2, 3}, b;
+    b.insert(b.end(), a.begin() + 10, a.end());
+    print_vector(b);
+}
+
+void _test_static1() {
+    static int x = 1;
+    x++;
+    cout << x << '\n';
+}
+
+void _test_static2() {
+    static int x = 10;
+    x++;
+    cout << x << '\n';
+}
+
+void test_static() {
+    _test_static1();
+    _test_static2();
+    _test_static1();
+    _test_static2();
+}
+
+void test_unique_ptr() { unique_ptr<int> p1(new int(1)); }
+
+class Cls1 {
+   public:
+    void foo1() {
+        a = 2;
+        cout << a << '\n';
+    }
+
+   private:
+    int a;
+};
+
+class Cls2 {
+    
+};
+
 int main() {
-    test_reserve();
+    test_unordered_map();
 
     return 0;
 }

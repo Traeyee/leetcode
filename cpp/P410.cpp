@@ -6,7 +6,9 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <numeric>
 #include <queue>
+#include <random>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -18,6 +20,33 @@ using namespace std;
 
 class Solution {
    public:
+    int splitArray(vector<int>& nums, int m) {
+        int l = *max_element(nums.begin(), nums.end()),
+            r = accumulate(nums.begin(), nums.end(), 0);
+        int min_limit = r;
+        while (l <= r) {
+            int sum_limit = (r - l) / 2 + l;
+            int cur_sum = 0, subarr_cnt = 1;
+            for (int x : nums) {
+                if (cur_sum + x > sum_limit) {
+                    subarr_cnt++;
+                    cur_sum = x;
+                } else {
+                    cur_sum += x;
+                }
+            }
+
+            if (subarr_cnt <= m) {
+                // 太大了，可以缩
+                r = sum_limit - 1;
+                min_limit = sum_limit < min_limit ? sum_limit : min_limit;
+            } else {
+                l = sum_limit + 1;
+            }
+        }
+
+        return min_limit;
+    }
     int least_split(vector<int>& nums, int sum_limit) {
         // 注意到一个事实，从前面开始算起，在sum_limit下如果前面的子区间能尽量多地吞下元素，对后面越有利
         // 不存在前面多吞了，后面就不是最优的可能，因为 0 <= nums[i] <= 106
@@ -32,7 +61,7 @@ class Solution {
         }
         return cnt;
     }
-    int splitArray(vector<int>& nums, int m) {
+    int splitArray__TL(vector<int>& nums, int m) {
         int max_sum = 0;
         for (const auto& ele : nums) {
             max_sum += ele;
@@ -83,9 +112,12 @@ class Solution {
 };
 
 int main() {
-    vector<int> nums = {7, 2, 5, 10, 8};
-    int m = 2;
     Solution s;
+    vector<int> nums;
+    int m;
+
+    nums = {7, 2, 5, 10, 8};
+    m = 2;
     cout << s.splitArray(nums, m) << "\n";
 
     nums = {1, 2, 3, 4, 5};
@@ -95,9 +127,6 @@ int main() {
     nums = {1, 4, 4};
     m = 3;
     cout << s.splitArray(nums, m) << "\n";
-
-    unordered_map<string, int> tmp;
-    cout << "#" << tmp.bucket_count() << "\n";
 
     return 0;
 }

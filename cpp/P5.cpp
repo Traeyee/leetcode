@@ -21,6 +21,24 @@ class Solution {
    public:
     string longestPalindrome(string s) {
         int n = s.size();
+        string max_s = "";
+        for (int i = 0; i < n; i++) {
+            for (int r : {i, i + 1}) {
+                int l = i;
+                while (0 <= l && r < n && s[l] == s[r]) {
+                    int len = r - l + 1;
+                    if (len > max_s.size()) {
+                        max_s = s.substr(l, len);
+                    }
+                    l--;
+                    r++;
+                }
+            }
+        }
+        return max_s;
+    }
+    string longestPalindrome__TL(string s) {
+        int n = s.size();
         vector<vector<string>> memo(n, vector<string>());
         string longest = s.substr(0, 1);
 

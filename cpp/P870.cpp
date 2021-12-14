@@ -20,9 +20,49 @@ struct SubSolution {
     }
 };
 
+// 没来得及写：可以这样，1由大到小排序，2由大到小排序，对于i, 若n1[i] >
+// n2[i]，加入，否则找n1最小的顶
+//
+
 class Solution {
    public:
     vector<int> advantageCount(vector<int>& nums1, vector<int>& nums2) {
+        
+    }
+    vector<int> advantageCount__TL(vector<int>& nums1, vector<int>& nums2) {
+        int n = nums1.size();
+        sort(nums1.begin(), nums1.end());
+        vector<bool> used(n, false);
+
+        vector<bool> found(n, false);
+        vector<int> res(n);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!used[j] && nums1[j] > nums2[i]) {
+                    res[i] = nums1[j];
+                    used[j] = true;
+                    found[i] = true;
+                    break;
+                }
+            }
+        }
+
+        int j = 0;
+        for (int i = 0; i < n; i++) {
+            if (!found[i]) {
+                while (used[j]) {
+                    j++;
+                }
+                res[i] = nums1[j];
+                used[j] = true;
+                found[i] = true;
+                j++;
+            }
+        }
+
+        return res;
+    }
+    vector<int> advantageCount0(vector<int>& nums1, vector<int>& nums2) {
         vector<SubSolution> subs;
         for (size_t i = 0; i < nums2.size(); i++) {
             subs.emplace_back(-1, nums2[i], i);
@@ -66,3 +106,26 @@ class Solution {
         return new_nums1;
     }
 };
+
+template <class T>
+void print_vector(vector<T>& nums) {
+    for (const auto& num : nums) {
+        cout << num << ", ";
+    }
+    cout << '\n';
+}
+
+int main() {
+    Solution sol;
+    vector<int> nums1, nums2, res;
+
+    nums1 = {2, 7, 11, 15}, nums2 = {1, 10, 4, 11};
+    res = sol.advantageCount(nums1, nums2);
+    print_vector(res);
+
+    nums1 = {12, 24, 8, 32}, nums2 = {13, 25, 32, 11};
+    res = sol.advantageCount(nums1, nums2);
+    print_vector(res);
+
+    return 0;
+}

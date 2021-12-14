@@ -17,9 +17,56 @@
 #include <vector>
 using namespace std;
 
+struct Node {
+    int val;
+    Node *prev, *next;
+    Node(int val) : val(val), prev(nullptr), next(nullptr){};
+};
+
 class Solution {
    public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        vector<int> res;
+        Node* dummy = new Node(0);
+        vector<Node*> nodes;
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            // cout << "#window:";
+            // auto tmp_ptr = dummy->next;
+            // while (tmp_ptr) {
+            //     cout << tmp_ptr->val << ", ";
+            //     tmp_ptr = tmp_ptr->next;
+            // }
+            // cout << "\n";
+
+            if (i - k >= 0) {
+                nodes[i - k]->prev->next = nodes[i - k]->next;
+                if (nodes[i - k]->next) {
+                    nodes[i - k]->next->prev = nodes[i - k]->prev;
+                }
+            }
+
+            Node *ptr1 = dummy, *ptr2 = dummy->next;
+            Node* node = new Node(nums[i]);
+            nodes.emplace_back(node);
+            while (ptr2 && node->val <= ptr2->val) {
+                ptr1 = ptr1->next;
+                ptr2 = ptr2->next;
+            }
+            ptr1->next = node;
+            node->prev = ptr1;
+            node->next = ptr2;
+            if (ptr2) {
+                ptr2->prev = node;
+            }
+            if (i >= k - 1) {
+                res.emplace_back(dummy->next->val);
+            }
+        }
+        return res;
+    }
+
+    vector<int> maxSlidingWindow__FALSE(vector<int>& nums, int k) {
         vector<int> res;
         queue<int> q;
 
@@ -39,7 +86,8 @@ class Solution {
             r_end = l_end + k - 1;
             while (!q.empty()) {
                 cout << "#db1:" << l_end << "," << r_end << ":"
-                         << nums[q.front()] << "?" << nums[r_end] << ", q=" << q.size() << "\n";
+                     << nums[q.front()] << "?" << nums[r_end]
+                     << ", q=" << q.size() << "\n";
                 if (q.front() == l_end - 1 || nums[q.front()] < nums[r_end]) {
                     cout << "#pop:" << l_end << "," << r_end << ":"
                          << nums[q.front()] << "\n";

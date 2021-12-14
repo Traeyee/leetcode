@@ -21,6 +21,16 @@ class Solution {
    public:
     int longestPalindromeSubseq(string s) {
         int n = s.size();
+    }
+
+
+
+
+
+
+
+    int longestPalindromeSubseq__DP(string s) {
+        int n = s.size();
         int dp[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {

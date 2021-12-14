@@ -22,6 +22,41 @@ struct ListNode {
 class Solution {
    public:
     ListNode* reverseKGroup(ListNode* head, int k) {
+        ListNode *dummy = new ListNode(0, head);
+        ListNode *cur_node = head, *ptr, *prev_ptr, *cur_ptr, *tmp_ptr, *last_node = dummy;
+        while (cur_node) {
+            // 看看够不够k个
+            int cnt = 0;
+            ptr = cur_node;
+            while (ptr && cnt < k) {
+                ptr = ptr->next;
+                cnt++;
+            }
+            // 结束时ptr指向下一个起点
+            if (k == cnt) {
+                // 够，翻转，并使last_node->next指向新head，last_node=新tail
+                prev_ptr = nullptr, cur_ptr = cur_node;
+                cnt = 0;
+                while (cnt < k) {
+                    tmp_ptr = cur_ptr->next;
+                    cur_ptr->next = prev_ptr;
+                    prev_ptr = cur_ptr;
+                    cur_ptr = tmp_ptr;
+                    cnt++;
+                }
+                // 结束时prev_ptr指向新head，cur_ptr是下一轮的起点
+                last_node->next = prev_ptr;
+                cur_node->next = cur_ptr;
+                last_node = cur_node;
+                cur_node = cur_ptr;
+            } else {
+                // 不够，break
+                break;
+            }
+        }
+        return dummy->next;
+    }
+    ListNode* reverseKGroup0(ListNode* head, int k) {
         auto dummy = new ListNode(0, head);
         ListNode *last_node = dummy, *cur_node = head;
         while (cur_node) {

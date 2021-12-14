@@ -44,7 +44,44 @@ class Solution {
         }
     }
 
-    ListNode* reverseBetween(ListNode* head, int left, int right) {
+    ListNode* reverseBetween0(ListNode* head, int left, int right) {
         return _reverseBetween(nullptr, head, left, right);
+    }
+
+    ListNode* reverseBetween__FALSE(ListNode* head, int left, int right) {
+        if (!head) {
+            return nullptr;
+        }
+        ListNode *dummy = new ListNode(0, head);
+        ListNode *tail1, *head2, *tail2, *head3, *ptr = dummy;
+        
+        int seq = 1;
+        while (seq < left) {
+            ptr = ptr->next;
+            seq++;
+        }
+        tail1 = ptr;
+        head2 = ptr->next;
+        while (seq <= right) {
+            ptr = ptr->next;
+            seq++;
+        }
+        tail2 = ptr;
+        head3 = ptr->next;
+
+        // 反转
+        ListNode *new_head2 = nullptr, *new_tail2 = head2, *tmp_ptr;
+        ptr = head2;
+        while (ptr != head3) {
+            tmp_ptr = ptr->next;
+            ptr->next = new_head2;
+            new_head2 = ptr;
+            ptr = tmp_ptr;
+        }
+        new_tail2 = ptr;
+        tail1->next = new_head2;
+        new_tail2->next = head3;
+
+        return dummy->next;
     }
 };

@@ -1,7 +1,8 @@
 /**
  * @author cuiyi@zuoshouyisheng.com
  * @time   05 January 2021 13:46
- * @brief  好像并不是蓄水池问题？注意当我们限制循环次数，便是个已知序列？确实是蓄水池问题，先将池灌满
+ * @brief
+ * 好像并不是蓄水池问题？注意当我们限制循环次数，便是个已知序列？确实是蓄水池问题，先将池灌满
  * 教训1：详见test_cpp.cpp:test_reserve
  * 教训2：uniform_int_distribution: [a, b]; uniform_real_distribution: [a, b)
  */
@@ -9,8 +10,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <random>
-#include <stack>
 #include <sstream>
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -29,41 +30,37 @@ int nrand(int n) {
 }
 
 class Solution {
- public:
-  Solution(vector<int> &nums) {
-      nums_ = &nums;
-  }
-  vector<int> pickK(int target, int k) {
-      vector<int> pool(0);
-      std::random_device rd;
-      std::mt19937 mt(rd());
+   public:
+    Solution(vector<int> &nums) { nums_ = &nums; }
+    vector<int> pickK(int target, int k) {
+        vector<int> pool(0);
+        std::random_device rd;
+        std::mt19937 mt(rd());
 
-      vector<int> &nums = *nums_;
-      int n = 0;
-      for (int i = 0; i < nums.size(); i++) {
-          if (nums[i] == target) {
-              n++;
-              if (pool.size() < k) {
-                  pool.push_back(i);
-              } else {  // 抽样替换，使得p = k / n
-                  // 相当于从n中再选一次
-                  std::uniform_int_distribution<int> dist(0, n - 1);
-                  int m = dist(mt);
-                  if (m < k) {
-                      pool[m] = i;
-                  }
-              }
-          }
-      }
+        vector<int> &nums = *nums_;
+        int n = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] == target) {
+                n++;
+                if (pool.size() < k) {
+                    pool.push_back(i);
+                } else {  // 抽样替换，使得p = k / n
+                    // 相当于从n中再选一次
+                    std::uniform_int_distribution<int> dist(0, n - 1);
+                    int m = dist(mt);
+                    if (m < k) {
+                        pool[m] = i;
+                    }
+                }
+            }
+        }
 
-      return pool;
-  }
+        return pool;
+    }
 
-  int pick(int target) {
-      return pickK(target, 1)[0];
-  }
+    int pick(int target) { return pickK(target, 1)[0]; }
 
-  vector<int> *nums_;
+    vector<int> *nums_;
 };
 
 int main() {

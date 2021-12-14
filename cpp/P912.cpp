@@ -20,6 +20,45 @@ class Solution {
    public:
     vector<int> quick_sort(vector<int>& nums) {
         stack<pair<int, int>> stk;
+        stk.emplace(0, nums.size() - 1);
+        while (stk.size() > 0) {
+            int l = stk.top().first, r = stk.top().second;
+            stk.pop();
+
+            // 加入随机化因素，避免worst case
+            int mid = (l + r) / 2;
+            swap(nums[mid], nums[l]);
+
+            int guard = nums[l];
+            int n_l = 0, n_r = 0;
+            for (int i = l + 1; i <= r; i++) {
+                int start_r = l + 1 + n_l;
+                if (nums[i] < guard) {
+                    if (n_r > 0) {
+                        swap(nums[i], nums[start_r]);
+                    }
+                    n_l++;
+                } else {
+                    n_r++;
+                }
+            }
+            int end_l = l + n_l;
+            swap(nums[l], nums[end_l]);
+
+            if (n_l > 1) {
+                stk.emplace(l, end_l - 1);
+            }
+            if (n_r > 1) {
+                stk.emplace(l + n_l + 1, r);
+            }
+        }
+
+        return nums;
+    }
+
+    // 难看版本
+    vector<int> quick_sort0(vector<int>& nums) {
+        stack<pair<int, int>> stk;
         stk.push(make_pair(0, nums.size()));
         while (stk.size() > 0) {
             int l = stk.top().first, r = stk.top().second;
