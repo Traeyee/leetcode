@@ -19,6 +19,20 @@ using namespace std;
 
 class Solution {
    public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int m = matrix.size(), n = matrix[0].size();
+        int row = 0, col = n - 1;
+        while (row < m && 0 <= col) {
+            if (matrix[row][col] < target) {
+                row++;
+            } else if (matrix[row][col] > target) {
+                col--;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
     bool searchMatrix(vector<vector<int>>& matrix, int top, int bottom,
                       int left, int right, int target) {
         cout << "# " << top << ", " << bottom << ", " << left << ", " << right
@@ -56,7 +70,7 @@ class Solution {
         }
         return false;
     }
-    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+    bool searchMatrix0(vector<vector<int>>& matrix, int target) {
         int m = matrix.size(), n = matrix[0].size();
         return searchMatrix(matrix, 0, m - 1, 0, n - 1, target);
     }

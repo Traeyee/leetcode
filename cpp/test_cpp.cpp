@@ -3,14 +3,20 @@
  * @time   2021-11-01 15:58
  * @brief
  */
+#include <unistd.h>
+
 #include <algorithm>
+#include <chrono>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
+#include <thread>
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
@@ -188,21 +194,124 @@ void test_unique_ptr() { unique_ptr<int> p1(new int(1)); }
 
 class Cls1 {
    public:
-    void foo1() {
+    virtual void foo1() {
         a = 2;
         cout << a << '\n';
     }
+    // virtual void foo2()=0;
 
    private:
+    typedef int T1;
     int a;
 };
 
 class Cls2 {
-    
+   public:
+    typedef int T2;
 };
 
+class SubCls1 : Cls1 {
+   public:
+    int foo1(int a1) {
+        cout << "b\n";
+        return 0;
+    }
+};
+
+void test_virtual() { SubCls1 sc1; }
+
+struct RValue {
+    RValue() : name_("undefined") { cout << name_ << ": default\n"; }
+    RValue(string name) : name_(name) {}
+    RValue(RValue& rv) { cout << name_ << ": copy\n"; }
+    RValue(RValue&& rv) { cout << name_ << ": move\n"; }
+    RValue& operator=(RValue& rv) {
+        cout << name_ << ": =\n";
+        if (this != &rv) {
+            name_ = rv.name_;
+        }
+        return *this;
+    }
+    RValue& operator=(RValue&& rv) {
+        cout << name_ << ": =r\n";
+        if (this != &rv) {
+            name_ = rv.name_;
+        }
+        return *this;
+    }
+    string name_;
+};
+
+struct PRValue {
+    RValue rv;
+};
+
+void _test_rvalue(PRValue& prv) {
+    auto tmp1 = new RValue;
+    unique_ptr<RValue> p1(tmp1);
+    unique_ptr<RValue> p2(tmp1);
+
+    RValue rv2("2");
+    // prv.rv = rv2;
+    // prv.rv = move(rv2);
+    prv.rv = RValue(move(rv2));
+}
+void test_rvalue() {
+    // int& a;
+
+    PRValue prv;
+    _test_rvalue(prv);
+}
+
+void test_fork() {
+    int pid;
+    pid = fork();
+    pid = fork();
+    pid = fork();
+    printf("%d: hello work\n", pid);
+}
+
+void test_tmp() {
+    double a = 1 / 3;
+    cout << a << '\n';
+}
+
+void test_bit() {
+    int x1 = 1 << 31;
+    cout << x1 << '\n';
+    int x2 = ~x1;
+    cout << x2 << '\n';
+}
+
+void test_map_op() {
+    // us
+    chrono::system_clock::time_point ts;
+    // auto ts0 = chrono::system_clock::now();
+    // this_thread::sleep_for(chrono::milliseconds(1500));
+    // ts = chrono::system_clock::now();
+    // double s = (ts - ts0).count() / 1000000.0;
+    // cout << s << '\n';
+
+    // time_t ts;
+    // time_t ts0 = time(0);
+    // this_thread::sleep_for(chrono::milliseconds(1500));
+    // ts = time(0);
+    // auto intv = ts - ts0;
+    // cout << ts << " - " << ts0 << " = " << intv << '\n';
+}
+
+void test_assign_seq() {
+    int i = 10, j = i + 1;
+    cout << i << ", " << j << '\n';
+}
+
+void test_typedef() {
+    // Cls1::T1 t1;
+    Cls2::T2 t2;
+}
+
 int main() {
-    test_unordered_map();
+    test_assign_seq();
 
     return 0;
 }

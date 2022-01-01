@@ -6,8 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -20,6 +22,87 @@ using namespace std;
 class Solution {
    public:
     int myAtoi(string s) {
+        int n = s.size();
+        bool is_positive = true;
+
+        int l = -1, r = -1;
+        int state = 0;
+        for (int i = 0; i < n; i++) {
+            if (0 == state) {
+                if (' ' == s[i]) {
+                } else if ('-' == s[i]) {
+                    is_positive = false;
+                    state = 1;
+                } else if ('+' == s[i]) {
+                    state = 1;
+                } else if ('0' == s[i]) {
+                    state = 1;
+                } else if ('1' <= s[i] && s[i] <= '9') {
+                    l = i;
+                    r = i;
+                    state = 2;
+                } else {
+                    return 0;
+                }
+            } else if (1 == state) {
+                if ('0' == s[i]) {
+                } else if ('1' <= s[i] && s[i] <= '9') {
+                    l = i;
+                    r = i;
+                    state = 2;
+                } else {
+                    return 0;
+                }
+            } else {
+                if ('0' <= s[i] && s[i] <= '9') {
+                    if (-1 == l) {
+                        l = i;
+                    }
+                    r = i;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        int MY_MIN = 1 << 31;
+        int MY_MAX = ~INT_MIN;
+        if (!(0 <= l && l <= r && r < n)) {
+            return 0;
+        } else if (r - l + 1 > 10 || (r - l + 1 == 10 && s[l] > '2')) {
+            if (!is_positive) {
+                return MY_MIN;
+            }
+            return MY_MAX;
+        }
+
+        int danger_num = is_positive ? MY_MAX : MY_MIN;
+        int res = 0, base = 1;
+        for (int i = r; i >= l; i--) {
+            int x = (s[i] - '0') * base;
+            if (is_positive) {
+                danger_num -= x;
+                if (danger_num <= 0) {
+                    return MY_MAX;
+                }
+            } else {
+                danger_num += x;
+                if (danger_num >= 0) {
+                    return MY_MIN;
+                }
+            }
+            res += x;
+            if (i > l) {
+                base *= 10;
+            }
+        }
+
+        if (!is_positive) {
+            return -res;
+        }
+        return res;
+    }
+    int myAtoi0(string s) {
         // 策略：先存起来再操作
         int sign = 1;
         vector<char> nums;
@@ -141,6 +224,9 @@ int main() {
     cout << sol.myAtoi(s) << "\n";
 
     s = "20000000000000000000";
+    cout << sol.myAtoi(s) << "\n";
+
+    s = "  0000000000012345678";
     cout << sol.myAtoi(s) << "\n";
 
     return 0;

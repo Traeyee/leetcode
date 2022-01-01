@@ -26,7 +26,43 @@ struct ListNode {
 
 class Solution {
    public:
-   // TL，因为我这个算法没有实现随机化
+    ListNode* sortList(ListNode* head) {
+        if (!head || !head->next) {
+            return head;
+        }
+        ListNode *slow = head, *fast = head->next;
+        while (slow != fast && fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        ListNode* mid = slow->next;
+        slow->next = nullptr;
+        auto part1 = sortList(head);
+        auto part2 = sortList(mid);
+
+        // merge
+        ListNode *dummy = new ListNode, *cur_ptr;
+        cur_ptr = dummy;
+        while (part1 && part2) {
+            if (part1->val < part2->val) {
+                cur_ptr->next = part1;
+                part1 = part1->next;
+            } else {
+                cur_ptr->next = part2;
+                part2 = part2->next;
+            }
+            cur_ptr = cur_ptr->next;
+        }
+        if (part1) {
+            cur_ptr->next = part1;
+        }
+        if (part2) {
+            cur_ptr->next = part2;
+        }
+        return dummy->next;
+    }
+
+    // TL，因为我这个算法没有实现随机化
     tuple<ListNode*, ListNode*, ListNode*> partition(ListNode* head) {
         // cout << "# " << head->val << "\n";
         ListNode *lhead = new ListNode(0), *guard = head,
@@ -74,7 +110,7 @@ class Solution {
         auto res = make_pair(new_head, new_tail);
         return res;
     }
-    ListNode* sortList(ListNode* head) {
+    ListNode* sortList__TL(ListNode* head) {
         if (!head) {
             return nullptr;
         }

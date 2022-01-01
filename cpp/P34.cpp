@@ -6,7 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
+#include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -19,6 +22,35 @@ using namespace std;
 class Solution {
    public:
     vector<int> searchRange(vector<int>& nums, int target) {
+        int n = nums.size();
+        stack<pair<int, int>> stk;
+        stk.emplace(0, nums.size() - 1);
+
+        int start = n, end = -1;
+        while (stk.size() > 0) {
+            int l = stk.top().first, r = stk.top().second;
+            stk.pop();
+            if (l > r) {
+                continue;
+            }
+            int mid = (r - l) / 2 + l;
+            if (target == nums[mid]) {
+                start = mid < start ? mid : start;
+                end = mid > end ? mid : end;
+                stk.emplace(mid + 1, r);
+                stk.emplace(l, mid - 1);
+            } else if (target < nums[mid]) {
+                stk.emplace(l, mid - 1);
+            } else {
+                stk.emplace(mid + 1, r);
+            }
+        }
+        if (start == n) {
+            start = -1;
+        }
+        return {start, end};
+    }
+    vector<int> searchRange0(vector<int>& nums, int target) {
         int start = -1, end = -1;
         int l = 0, r = nums.size() - 1;
         // 先找start

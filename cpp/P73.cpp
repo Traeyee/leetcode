@@ -21,24 +21,56 @@ class Solution {
    public:
     void setZeroes(vector<vector<int>>& matrix) {
         int m = matrix.size(), n = matrix[0].size();
+        bool first_row_0 = false, first_col_0 = false;
         for (int i = 0; i < m; i++) {
-            bool this_row_has0 = false;
             for (int j = 0; j < n; j++) {
                 if (0 == matrix[i][j]) {
-                    this_row_has0 = true;
-                    break;
-                }
-            }
-            for (int j = 0; j < n; j++) {
-                // 只关心自己变不变零
-                if (this_row_has0) {
-                    matrix[i][j] = 0;
-                } else if (matrix[i][j]) {
-                    // 看看这列有没有零
-                    for (int i1 = i + 1; i1 < m; i1++) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                    if (0 == i) {
+                        first_row_0 = true;
+                    }
+                    if (0 == j) {
+                        first_col_0 = true;
                     }
                 }
             }
         }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (0 == matrix[0][j] || 0 == matrix[i][0]) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        // for (int i = 0; i < m; i++) {
+        //     for (int j = 0; j < n; j++) {
+        //         cout << matrix[i][j] << ", ";
+        //     }
+        //     cout << '\n';
+        // }
+        if (first_col_0) {
+            for (int i = 0; i < m; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+        if (first_row_0) {
+            for (int j = 0; j < n; j++) {
+                matrix[0][j] = 0;
+            }
+        }
     }
 };
+
+int main() {
+    Solution sol;
+    vector<vector<int>> matrix;
+
+    // matrix = {{1,1,1},{1,0,1},{1,1,1}};
+
+    matrix = {{0, 1, 2, 0}, {3, 4, 5, 2}, {1, 3, 1, 5}};
+    sol.setZeroes(matrix);
+
+    return 0;
+}

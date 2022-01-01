@@ -6,8 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -19,6 +21,44 @@ using namespace std;
 
 class Solution {
    public:
+    int search20211227(vector<int>& nums, int l, int r, int target) {
+        if (l > r) {
+            return -1;
+        }
+        int mid = (r - l) / 2 + l;
+        if (nums[mid] == target) {
+            return mid;
+        }
+        if (nums[l] <= nums[r]) {
+            if (target < nums[mid]) {
+                return search20211227(nums, l, mid - 1, target);
+            } else {
+                return search20211227(nums, mid + 1, r, target);
+            }
+        } else {  // l...peak...r
+            if (nums[l] <= nums[mid]) {
+                // l......mid...peak...r
+                if (nums[l] <= target && target < nums[mid]) {
+                    return search20211227(nums, l, mid - 1, target);
+                } else {
+                    return search20211227(nums, mid + 1, r, target);
+                }
+            } else {
+                // l...peak...mid......r
+                if (nums[mid] < target && target <= nums[r]) {
+                    return search20211227(nums, mid + 1, r, target);
+                } else {
+                    return search20211227(nums, l, mid - 1, target);
+                }
+            }
+        }
+        return -1;
+    }
+    // 边界不清晰
+    int search__FALSE(vector<int>& nums, int target) {
+        return search20211227(nums, 0, nums.size() - 1, target);
+    }
+    
     pair<int, int> search(vector<int>& nums, int l, int r, int target) {
         // TODO: base case
 
@@ -96,7 +136,7 @@ class Solution {
         return binary_search(nums, mid + 1, r, target);
     }
 
-    int search(vector<int>& nums, int target) {
+    int search0(vector<int>& nums, int target) {
         // 先二分找到k，TODO：途中有k返k
         // 再确定区间，再找target
         if (target == nums[0]) {
@@ -121,28 +161,28 @@ int main() {
     vector<int> nums;
     int target;
 
-    nums = {4, 5, 6, 7, 0, 1, 2};
-    target = 0;
-    cout << sol.search(nums, target) << "\n";
+    // nums = {4, 5, 6, 7, 0, 1, 2};
+    // target = 0;
+    // cout << sol.search(nums, target) << "\n";
 
-    target = 3;
-    cout << sol.search(nums, target) << "\n";
+    // target = 3;
+    // cout << sol.search(nums, target) << "\n";
 
-    nums = {1};
-    target = 0;
-    cout << sol.search(nums, target) << "\n";
+    // nums = {1};
+    // target = 0;
+    // cout << sol.search(nums, target) << "\n";
 
-    nums = {1, 3};
-    target = 3;
-    cout << sol.search(nums, target) << "\n";
+    // nums = {1, 3};
+    // target = 3;
+    // cout << sol.search(nums, target) << "\n";
 
     nums = {3, 1};
     target = 1;
     cout << sol.search(nums, target) << "\n";
 
-    nums = {2, 3, 4, 5, 1};
-    target = 1;
-    cout << sol.search(nums, target) << "\n";
+    // nums = {2, 3, 4, 5, 1};
+    // target = 1;
+    // cout << sol.search(nums, target) << "\n";
 
     return 0;
 }

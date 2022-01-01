@@ -6,8 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -26,6 +28,25 @@ struct Node {
 class Solution {
    public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        auto cmp = [](pair<int, int>& p1, pair<int, int>& p2) {
+            return p1.second < p2.second;
+        };
+        priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)>
+            max_heap(cmp);
+        vector<int> res;
+        for (int i = 0; i < k - 1; i++) {
+            max_heap.emplace(make_pair(i, nums[i]));
+        }
+        for (int i = k - 1; i < nums.size(); i++) {
+            while (max_heap.size() > 0 && max_heap.top().first <= i - k) {
+                max_heap.pop();
+            }
+            max_heap.emplace(make_pair(i, nums[i]));
+            res.emplace_back(max_heap.top().second);
+        }
+        return res;
+    }
+    vector<int> maxSlidingWindow__FALSE2(vector<int>& nums, int k) {
         vector<int> res;
         Node* dummy = new Node(0);
         vector<Node*> nodes;

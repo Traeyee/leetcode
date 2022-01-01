@@ -6,7 +6,11 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <list>
+#include <map>
 #include <queue>
+#include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -18,6 +22,74 @@ using namespace std;
 
 class Solution {
    public:
+    vector<int> quick_sort_r1(vector<int>& nums) {
+        stack<pair<int, int>> stk;
+        stk.emplace(0, nums.size() - 1);
+
+        while (stk.size() > 0) {
+            int l = stk.top().first, r = stk.top().second;
+            stk.pop();
+            if (l >= r) {
+                continue;
+            }
+
+            int mid = (r - l) / 2 + l;
+            swap(nums[l], nums[mid]);
+            int n_l = 0;
+            for (int i = l + 1; i <= r; i++) {
+                if (nums[i] < nums[l]) {
+                    int r_start = l + 1 + n_l;
+                    swap(nums[i], nums[r_start]);
+                    n_l++;
+                }
+            }
+            int l_end = l + n_l;
+            swap(nums[l], nums[l_end]);
+            stk.emplace(l, l_end);
+            stk.emplace(l_end + 1, r);
+        }
+
+        return nums;
+    }
+
+    vector<int> merge_sort(vector<int>& nums) {
+        _merge_sort(nums, 0, nums.size() - 1);
+        return nums;
+    }
+
+    void _merge_sort(vector<int>& nums, int l, int r) {
+        if (l >= r) {
+            return;
+        }
+        int mid = (r - l) / 2 + l;
+        _merge_sort(nums, l, mid);
+        _merge_sort(nums, mid + 1, r);
+
+        vector<int> tmp;
+        int i = l, j = mid + 1;
+        while (i <= mid && j <= r) {
+            if (nums[i] < nums[j]) {
+                tmp.emplace_back(nums[i]);
+                i++;
+            } else {
+                tmp.emplace_back(nums[j]);
+                j++;
+            }
+        }
+        while (i <= mid) {
+            tmp.emplace_back(nums[i]);
+            i++;
+        }
+        while (j <= r) {
+            tmp.emplace_back(nums[j]);
+            j++;
+        }
+
+        for (i = 0; i < tmp.size(); i++) {
+            nums[l + i] = tmp[i];
+        }
+    }
+
     vector<int> quick_sort(vector<int>& nums) {
         stack<pair<int, int>> stk;
         stk.emplace(0, nums.size() - 1);
@@ -56,49 +128,6 @@ class Solution {
         return nums;
     }
 
-    // 难看版本
-    vector<int> quick_sort0(vector<int>& nums) {
-        stack<pair<int, int>> stk;
-        stk.push(make_pair(0, nums.size()));
-        while (stk.size() > 0) {
-            int l = stk.top().first, r = stk.top().second;
-            // cout << "#" << l << ", " << r << "\n";
-            stk.pop();
-            if (l >= r - 1) {
-                continue;
-            }
-
-            int guard = nums[l];
-            int first_right_pos = l + 1;
-            int tmp;
-            // 记住，划分过程不可能动到guard
-            for (int next_check_pos = l + 1; next_check_pos < r;
-                 next_check_pos++) {
-                if (nums[next_check_pos] < guard) {
-                    // 交换
-                    tmp = nums[first_right_pos];
-                    nums[first_right_pos] = nums[next_check_pos];
-                    nums[next_check_pos] = tmp;
-                    first_right_pos++;
-                }
-            }
-            int last_left_pos = first_right_pos - 1;
-            tmp = nums[last_left_pos];
-            nums[last_left_pos] = guard;
-            nums[l] = tmp;
-            int cur_guard_pos = last_left_pos;
-            stk.push(make_pair(l, cur_guard_pos));
-            stk.push(make_pair(first_right_pos, r));
-
-            // cout << "##";
-            // for (size_t i = l; i < r; i++) {
-            //     cout << nums[i] << ", ";
-            // }
-            // cout << "\n";
-        }
-
-        return nums;
-    }
     vector<int> bubble_sort(vector<int>& nums) {
         int tmp;
         for (int rbound = nums.size(); rbound > 0; rbound--) {
@@ -112,7 +141,7 @@ class Solution {
         }
         return nums;
     }
-    vector<int> sortArray(vector<int>& nums) { return bubble_sort(nums); }
+    vector<int> sortArray(vector<int>& nums) { return quick_sort_r1(nums); }
 };
 
 int main() {

@@ -6,8 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -38,7 +40,40 @@ struct RegexPart {
 
 class Solution {
    public:
+   // 边界问题
+    bool _isMatch__FALSE(string& s, int i, string& p, int j, map<int, int>& memo) {
+        if ((-1 == i && -1 != j) || (-1 != i && -1 == j)) {
+            return false;
+        } else if (-1 == i && -1 == j) {
+            return true;
+        }
+        int n = p.size();
+        int key = i * n + j;
+        if (memo.end() != memo.find(key)) {
+            return memo[key];
+        }
+
+        bool res = false;
+        if ('.' == p[j] || s[i] == p[j]) {
+            res = _isMatch(s, i - 1, p, j - 1, memo);
+        } else if ('*' == p[j]) {
+            if (_isMatch(s, i, p, j - 2, memo)) {
+                // 前面字符匹配0次
+                res = true;
+            } else if ('.' == p[j - 1] || s[i] == p[j - 1]) {
+                // 匹配1或n次
+                res = _isMatch(s, i - 1, p, j - 2, memo) || _isMatch(s, i - 1, p, j, memo);
+            }
+        }
+
+        memo[key] = res;
+        return res;
+    }
     bool isMatch(string s, string p) {
+        map<int, int> memo;
+        return _isMatch(s, s.size() - 1, p, p.size() - 1, memo);
+    }
+    bool isMatch1(string s, string p) {
         // 分为若干个literal
         int s_len = s.size(), p_len = p.size(), p_ptr = 0;
         vector<RegexPart> regex_parts;
@@ -86,7 +121,8 @@ class Solution {
                             match = false;
                             // cout << "# s_len=" << s_len << "\n";
                             // cout << s[i] << "--" << p[k] << "\n";
-                            // cout << "# here [" << regex_part.l << ", " << regex_part.r << "]" << i << "--" << k << "\n";
+                            // cout << "# here [" << regex_part.l << ", " <<
+                            // regex_part.r << "]" << i << "--" << k << "\n";
                             break;
                         }
                         k++;
@@ -108,7 +144,8 @@ class Solution {
 
         // for (int i = 0; i < regex_parts.size(); i++) {
         //     auto regex_part = regex_parts[i];
-        //     cout << "# wildcard=" << regex_part.is_wildcard << "[" << regex_part.l << ", "
+        //     cout << "# wildcard=" << regex_part.is_wildcard << "[" <<
+        //     regex_part.l << ", "
         //          << regex_part.r << "]";
         //     for (auto tmp2 : end_pos_list[i + 1]) {
         //         cout << tmp2 << ", ";

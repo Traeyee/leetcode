@@ -6,8 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -19,58 +21,45 @@ using namespace std;
 
 class Solution {
    public:
-    int longestSubstring(string s, int k) {
+    int _longestSubstring(string s, int l, int r, int k) {
         int n = s.size();
-
-        unordered_map<char, int> counter;
-        for (const auto& c : s) {
-            counter[c]++;
+        if (!(0 <= l && l <= r && r < n)) {
+            return 0;
         }
+        cout << "# " << l << ", " << r << '\n';
+        map<int, int> counter;
+        for (int i = l; i <= r; i++) {
+            counter[s[i]]++;
+        }
+        
         int max_len = 0;
-
-        int i = 0, j = 0;
-        unordered_map<char, int> tmp_counter;
-        int invalid_cnt = 0;
-        while (j < n) {
-            if (counter[s[j]] < k) {
-                while (i < j) {
-                    tmp_counter[s[i]]--;
-                    if (k - 1 == tmp_counter[s[i]]) {
-                        invalid_cnt++;
-                    }
-                    if (0 == tmp_counter[s[i]]) {
-                        invalid_cnt--;
-                    }
-                    i++;
-                    cout << "# " << i << ", " << j << ": " << invalid_cnt
-                         << '\n';
-                    if (0 == invalid_cnt) {
-                        max_len = j - i > max_len ? j - i : max_len;
-                    }
-                }
-                // 中断，然后重新开始
-                tmp_counter.clear();
-                invalid_cnt = 0;
-                i = j + 1;
-                j = i;
+        int start = -1;
+        bool all_no_less_than_k = true;
+        for (int i = l; i <= r; i++) {
+            if (counter[s[i]] < k) {
+                int sub_len = _longestSubstring(s, start, i - 1, k);
+                max_len = sub_len > max_len ? sub_len : max_len;
+                start = -1;
+                all_no_less_than_k = false;
             } else {
-                tmp_counter[s[j]]++;
-                if (1 == tmp_counter[s[j]]) {
-                    invalid_cnt++;
-                }
-                if (k == tmp_counter[s[j]]) {
-                    invalid_cnt--;
-                }
-                j++;
-                if (0 == invalid_cnt) {
-                    max_len = j - i > max_len ? j - i : max_len;
+                if (-1 == start) {
+                    start = i;
                 }
             }
-            // i...j-1
-            // cout << "# " << i << ", " << j << ": " << invalid_cnt << '\n';
+        }
+        if (all_no_less_than_k) {
+            return r - l + 1;
+        }
+        if (counter[s[r]] >= k) {
+            int sub_len = _longestSubstring(s, start, n - 1, k);
+            max_len = sub_len > max_len ? sub_len : max_len;
         }
 
         return max_len;
+    }
+    int longestSubstring(string s, int k) {
+        int n = s.size();
+        return _longestSubstring(s, 0, n - 1, k);
     }
 };
 
@@ -79,17 +68,17 @@ int main() {
     string s;
     int k;
 
-    s = "aaabb", k = 3;
-    cout << sol.longestSubstring(s, k) << '\n';
+    // s = "aaabb", k = 3;
+    // cout << sol.longestSubstring(s, k) << '\n';
 
-    s = "ababbc", k = 2;
-    cout << sol.longestSubstring(s, k) << '\n';
+    // s = "ababbc", k = 2;
+    // cout << sol.longestSubstring(s, k) << '\n';
 
     s = "bbaaacbd", k = 3;
     cout << sol.longestSubstring(s, k) << '\n';
 
-    s = "baaabcb", k = 3;
-    cout << sol.longestSubstring(s, k) << '\n';
+    // s = "baaabcb", k = 3;
+    // cout << sol.longestSubstring(s, k) << '\n';
 
     return 0;
 }

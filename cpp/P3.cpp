@@ -19,6 +19,7 @@ using namespace std;
 
 class Solution {
    public:
+    // 这个写法可能有错
     int lengthOfLongestSubstring(string s) {
         int n = s.size();
 
@@ -30,12 +31,7 @@ class Solution {
             char c = s[r];
             // 切记unordered_map::count是key的数目，不是key的value，所以永远是1！
             while (l < r && counter[c]) {
-                // cout << "#0:" << l << "," << r << "\n";
-                // cout << "#count:" << r << "=" << c << ":" << counter.count(c)
-                //      << "\n";
-                // cout << "#before:" << s[l] << ":" << counter[s[l]] << "\n";
                 counter[s[l]]--;
-                // cout << "#after:" << s[l] << ":" << counter[s[l]] << "\n";
                 l++;
             }
 

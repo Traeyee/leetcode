@@ -6,8 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -19,6 +21,63 @@ using namespace std;
 
 class Solution {
    public:
+    bool can_concat(string s1, string s2) {
+        if (s1.size() != s2.size()) {
+            return false;
+        }
+        for (int i = 0, j = s2.size() - 1; i < s1.size(); i++, j--) {
+            if (s1[i] != s2[j]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    vector<vector<string>> dp(
+        string s, int l, int r,
+        map<int, map<int, vector<vector<string>>>>& memo) {
+        if (memo.end() != memo.find(l) && memo[l].end() != memo[l].find(r)) {
+            return memo[l][r];
+        }
+
+        vector<vector<string>> res;
+        if (l == r) {
+            vector<string> sub_res1 = {s.substr(l, 1)};
+            res.emplace_back(sub_res1);
+        }
+        cout << "# " << l << ", " << r << '\n';
+        for (int i = l; i < r; i++) {
+            auto l_part = dp(s, l, i, memo);
+            auto r_part = dp(s, i + 1, r, memo);
+            for (const auto& sub_l : l_part) {
+                for (const auto& sub_r : r_part) {
+                    vector<string> sub_res(sub_l.begin(), sub_l.end());
+                    sub_res.insert(sub_res.end(), sub_r.begin(), sub_r.end());
+                    res.emplace_back(sub_res);
+                    // if (sub_l.size() == 1 && sub_r.size() == 1) {
+                    //     if (can_concat(sub_l[0], sub_r[0])) {
+                    //         vector<string> sub_res1 = {sub_l[0] + sub_r[0]};
+                    //         res.emplace_back(sub_res1);
+                    //     }
+                    // }
+                }
+            }
+        }
+
+        if (memo.end() == memo.find(l)) {
+            memo[l] = map<int, vector<vector<string>>>();
+        }
+        memo[l][r] = res;
+        return res;
+    }
+    vector<vector<string>> partition(string s) {
+        if (0 == s.size()) {
+            return {};
+        }
+        map<int, map<int, vector<vector<string>>>> memo;
+        return dp(s, 0, s.size() - 1, memo);
+    }
+
     bool is_palindrome(string s) {
         int l = 0, r = s.size() - 1;
         while (l <= r) {
@@ -39,7 +98,7 @@ class Solution {
         return ss.str();
     }
 
-    vector<vector<string>> partition(string s) {
+    vector<vector<string>> partition__FALSE(string s) {
         int n = s.size();
 
         vector<string> res0;
