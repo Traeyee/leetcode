@@ -1,13 +1,15 @@
 /**
  * @author cuiyiwork@foxmail.com
- * @time   2021-11-28 18:58
+ * @time   2021-12-26 22:48
  * @brief
  */
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -21,21 +23,28 @@ class Solution {
    public:
     void rotate(vector<int>& nums, int k) {
         int n = nums.size();
-
         int k1 = k % n;
         if (0 == k1) {
             return;
         }
-        vector<int> tmp_vec;
-        for (int i = n - k1; i < n; i++) {
-            tmp_vec.emplace_back(nums[i]);
-        }
 
-        for (int i = n; i >= k1; i--) {
-            nums[i] = nums[i - k1];
+        int i = 0, j = n - 1;
+        while (i < j) {
+            swap(nums[i], nums[j]);
+            i++;
+            j--;
         }
-        for (int i = 0; i < k1; i++) {
-            nums[i] = tmp_vec[i];
+        i = 0, j = k1 - 1;
+        while (i < j) {
+            swap(nums[i], nums[j]);
+            i++;
+            j--;
+        }
+        i = k1, j = n - 1;
+        while (i < j) {
+            swap(nums[i], nums[j]);
+            i++;
+            j--;
         }
     }
 };
@@ -45,7 +54,7 @@ void print_vector(vector<T>& nums) {
     for (const auto& num : nums) {
         cout << num << ", ";
     }
-    cout << "\n";
+    cout << '\n';
 }
 
 int main() {

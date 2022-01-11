@@ -10,6 +10,7 @@
 #include <climits>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <queue>
 #include <random>
 #include <set>
@@ -310,8 +311,52 @@ void test_typedef() {
     Cls2::T2 t2;
 }
 
+mutex global_mutex;
+
+class TestMutex {
+   public:
+    TestMutex(int seq) : seq_(seq) {}
+    thread test_thread1() {
+        thread t(&TestMutex::test1, this);
+        return t;
+    }
+    void test1() {
+        global_mutex.lock();
+        cout << seq_ << ";\n";
+    }
+    thread test_thread2() {
+        thread t(&TestMutex::test2, this);
+        return t;
+    }
+    void test2() {
+        mtx_.lock();
+        cout << seq_ << ";\n";
+    }
+
+   private:
+    mutex mtx_;
+    int seq_;
+};
+
+void test_mutex() {
+    TestMutex tm1(1), tm2(2);
+    auto th1 = tm1.test_thread2(), th2 = tm2.test_thread2();
+    th1.join();
+    th2.join();
+}
+void test_ptr_for_ref_arg(int& x) {
+    x = 20;
+    cout << x << '\n';
+}
+void test_ptr_for_ref_arg() {
+    int* x = new int(10);
+    cout << "#here1 " << *x << '\n';
+    test_ptr_for_ref_arg(*x);
+    cout << "#here2 " << *x << '\n';
+}
+
 int main() {
-    test_assign_seq();
+    test_ptr_for_ref_arg();
 
     return 0;
 }

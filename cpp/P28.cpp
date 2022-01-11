@@ -6,8 +6,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <random>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -22,84 +24,43 @@ class Solution {
     int strStr(string haystack, string needle) {
         int s_len = haystack.size(), p_len = needle.size();
         // 使得不用担心j越界
+        if (0 == p_len) {
+            return 0;
+        }
         if (s_len < p_len) {
             return -1;
         }
 
-        vector<unordered_map<char, int>> dp(p_len, unordered_map<char, int>());
-        // 构造dp数组
-        // dp[i]定义：当c != needle[i]时，可通过dp[i][c]返回到某个状态s[k]：s[k - 1] --c--> s[k]
-        // 最坏的情况是所有匹配失败都回到0
-        // 定义状态x: 和当前状态具有相同的前缀，且最长（因为短的那些你至少可在后面处理）
-        int x;
-        for (int i1 = 0; i1 < p_len; i1++) {
-            char c = needle[i1];
-            dp[i1][c] = i1 + 1;
-            x = dp[x][c];
-        }
-
-        int j = 0;  // pattern当前要check的位置，同时也是状态机里的状态代号
-        for (int i = 0; i < s_len; i++) {
-            if (haystack[i] == needle[j]) {
+        // 计算next
+        vector<int> next(p_len, 0);
+        next[0] = -1;
+        // next[j] = i 意味着 p[0...i-1]匹配上了p[j-i...j-1]
+        // 对于j，若p[j] == p[i]，则next[j + 1] = i + 1;
+        // 否则，i = next[i];
+        int i = next[0], j = 0;
+        while (j < p_len - 1) {
+            if (-1 == i || needle[j] == needle[i]) {
+                i++;
                 j++;
+                next[j] = i;
             } else {
-                j = dp[j][haystack[i]];
+                i = next[i];
             }
         }
 
-        // TODO: 返回索引
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // 思考过程，太快地自然到了next的思路了，但不容易想清楚，得backoff一下
-    int strStr1_0(string haystack, string needle) {
-        // fail指针：
-        // 对于c_i = needle[i]失败了, 如果有needle[p...i-1] == needle[0...q]
-        // 则可以试从q+1再试，即fail[i] = q + 1
-        // 怎么求fail[i]？令ptr = fail[i]，若needle[ptr] == needle[i]，则
-        int fail[needle.size()];
-        fail[0] = -1;
-        int pos;
-
-        fail[pos];
-
-        int j = 0;  // 现在要看的needle的位置
-        int i = 0;
-        while (i < haystack.size() && j < needle.size()) {
-            if (haystack[i] == needle[j]) {
+        i = 0, j = 0;
+        while (i < s_len && j < p_len) {
+            if (-1 == j || haystack[i] == needle[j]) {
                 i++;
                 j++;
             } else {
-                j = fail[j];
-                if (-1 == j) {
-                    i++;
-                    j = 0;
-                }
+                j = next[j];
             }
         }
-        if (needle.size() == j) {
-            // TODO: 匹配成功
+
+        if (j == p_len) {
+            // 5, 2, i = 5, j = 2
+            return i - j;
         }
         return -1;
     }
@@ -143,6 +104,12 @@ int main() {
     cout << sol.strStr(haystack, needle) << "\n";
 
     haystack = "", needle = "a";
+    cout << sol.strStr(haystack, needle) << "\n";
+
+    haystack = "mississippi", needle = "issip";
+    cout << sol.strStr(haystack, needle) << "\n";
+
+    haystack = "aabaaabaaac", needle = "aabaaac";
     cout << sol.strStr(haystack, needle) << "\n";
 
     return 0;

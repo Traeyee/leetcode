@@ -1,4 +1,5 @@
 // 如果给末尾搞指针，就不用专门存个ignores了
+// 思路：搞定能搞定的
 #include <algorithm>
 #include <climits>
 #include <iostream>
@@ -20,6 +21,12 @@ struct SubSolution {
     }
 };
 
+struct SSol {
+    int num1, num2, idx2;
+    bool solved;
+    SSol(int num2, int idx2) : num2(num2), idx2(idx2), solved(false) {}
+};
+
 // 没来得及写：可以这样，1由大到小排序，2由大到小排序，对于i, 若n1[i] >
 // n2[i]，加入，否则找n1最小的顶
 //
@@ -27,7 +34,42 @@ struct SubSolution {
 class Solution {
    public:
     vector<int> advantageCount(vector<int>& nums1, vector<int>& nums2) {
+        int n = nums1.size();
+        vector<SSol> ssol2;
+        for (int i = 0; i < n; i++) {
+            ssol2.emplace_back(nums2[i], i);
+        }
+        auto cmp = [](SSol& x1, SSol& x2) {return x1.num2 < x2.num2;};
+        sort(ssol2.begin(), ssol2.end(), cmp);
+        sort(nums1.begin(), nums1.end());
+        vector<bool> used(n, false);
         
+        int i = 0, j = 0;
+        while (i < n && j < n) {
+            if (nums1[i] > ssol2[j].num2) {
+                ssol2[j].num1 = nums1[i];
+                ssol2[j].solved = true;
+                used[i] = true;
+                j++;
+            }
+            i++;
+        }
+        i = 0;
+        for (auto& s2 : ssol2) {
+            if (s2.solved) {
+                continue;
+            }
+            while (used[i]) {
+                i++;
+            }
+            s2.num1 = nums1[i];
+            used[i] = true;
+        }
+        vector<int> res(n);
+        for (auto& s2 : ssol2) {
+            res[s2.idx2] = s2.num1;
+        }
+        return res;
     }
     vector<int> advantageCount__TL(vector<int>& nums1, vector<int>& nums2) {
         int n = nums1.size();
