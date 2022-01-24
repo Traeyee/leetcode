@@ -30,6 +30,19 @@
         "type_traits": "cpp",
         "__nullptr": "cpp",
         "algorithm": "cpp",
-        "__node_handle": "cpp"
+        "__node_handle": "cpp",
+        "optional": "cpp",
+        "bitset": "cpp",
+        "numeric": "cpp",
+        "sstream": "cpp",
+        "list": "cpp",
+        "chrono": "cpp",
+        "__functional_base": "cpp",
+        "cstdlib": "cpp",
+        "__functional_03": "cpp",
+        "__hash": "cpp",
+        "map": "cpp",
+        "system_error": "cpp",
+        "thread": "cpp"
     }
 }

@@ -4,12 +4,10 @@ import (
 	"testing"
 )
 
-<<<<<<< Updated upstream
-=======
 func TestP22(t *testing.T) {
 	P22()
 }
->>>>>>> Stashed changes
+
 func TestP46(t *testing.T) {
 	P46()
 }
