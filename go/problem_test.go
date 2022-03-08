@@ -11,8 +11,20 @@ func TestP22(t *testing.T) {
 func TestP46(t *testing.T) {
 	P46()
 }
+func TestP88(t *testing.T) {
+	P88()
+}
 func TestP94(t *testing.T) {
 	P94()
+}
+func TestP102(t *testing.T) {
+	P102()
+}
+func TestP118(t *testing.T) {
+	P118()
+}
+func TestP202(t *testing.T) {
+	P202()
 }
 func TestP338(t *testing.T) {
 	P338()
